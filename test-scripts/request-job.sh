@@ -5,4 +5,4 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-curl -H "X-Worker-Id $1" -H "X-Worker-Token: $2" http://localhost/api/task/request-task
+curl -H "X-Worker-Id: $1" -H "X-Worker-Token: $2" http://localhost/api/task/request-task

@@ -6,4 +6,4 @@ if [ $# -ne 4 ]; then
 fi
 
 # add json
-curl -X POST -H "X-Worker-Id $1" -H "X-Worker-Token: $2" http://localhost/api/alerts -d "{\"task_id\": \"$3\", \"alert_type: \"$4\", \"message\": \"Alert message\", \"reason\": \"Reason\"}"
+curl -X POST -H "X-Worker-Id: $1" -H "X-Worker-Token: $2" http://localhost/api/alert -d "{\"task_id\": \"$3\", \"alert_type: \"$4\", \"message\": \"Alert message\", \"reason\": \"Reason\"}"
