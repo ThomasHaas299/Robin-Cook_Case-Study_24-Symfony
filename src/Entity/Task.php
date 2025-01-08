@@ -51,4 +51,19 @@ class Task
     {
         $this->name = $name;
     }
+
+    public function getStatus(): TaskStatus
+    {
+        return $this->status;
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getWorker(): ?Worker
+    {
+        return $this->worker;
+    }
 }
