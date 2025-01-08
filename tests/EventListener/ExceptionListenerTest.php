@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class ExceptionListenerTest extends TestCase
 {
-    /** @var MockObject&ViewHandlerInterface $viewHandler */
+    /** @var MockObject&ViewHandlerInterface */
     private ViewHandlerInterface $viewHandler;
     private ExceptionListener $listener;
     private HttpKernelInterface $kernel;
@@ -38,13 +38,14 @@ class ExceptionListenerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testOnKernelExceptionWithNoTaskAvailableException():void
+    public function testOnKernelExceptionWithNoTaskAvailableException(): void
     {
         $this->viewHandler->expects($this->once())
             ->method('handle')
             ->with($this->callback(function (View $view) {
                 $data = $view->getData();
-                return $data['error'] === NoTaskAvailableException::ERROR && $data['message'] === NoTaskAvailableException::MESSAGE;
+
+                return NoTaskAvailableException::ERROR === $data['error'] && NoTaskAvailableException::MESSAGE === $data['message'];
             }))
             ->willReturn(new Response(NoTaskAvailableException::ERROR, 404));
 
@@ -59,17 +60,17 @@ class ExceptionListenerTest extends TestCase
         $this->assertEquals(NoTaskAvailableException::ERROR, $response->getContent());
     }
 
-
     /**
      * @throws Exception
      */
-    public function testOnKernelExceptionWithNotFoundHttpException():void
+    public function testOnKernelExceptionWithNotFoundHttpException(): void
     {
         $this->viewHandler->expects($this->once())
             ->method('handle')
             ->with($this->callback(function (View $view) {
                 $data = $view->getData();
-                return $data['error'] === 'Not Found' && $data['message'] === 'The requested resource could not be found.';
+
+                return 'Not Found' === $data['error'] && 'The requested resource could not be found.' === $data['message'];
             }))
             ->willReturn(new Response('Not Found', 404));
 
@@ -87,13 +88,14 @@ class ExceptionListenerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testOnKernelExceptionWithGenericException():void
+    public function testOnKernelExceptionWithGenericException(): void
     {
         $this->viewHandler->expects($this->once())
             ->method('handle')
             ->with($this->callback(function (View $view) {
                 $data = $view->getData();
-                return $data['error'] === 'An error occurred' && $data['message'] === 'Generic error';
+
+                return 'An error occurred' === $data['error'] && 'Generic error' === $data['message'];
             }))
             ->willReturn(new Response('An error occurred', 500));
 

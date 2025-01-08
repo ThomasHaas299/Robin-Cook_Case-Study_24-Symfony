@@ -3,7 +3,6 @@
 namespace App\Service\DTO;
 
 use App\Entity\Enum\AlertStatus;
-use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class AlertDTO
@@ -27,9 +26,10 @@ class AlertDTO
     public function getStatus(): AlertStatus
     {
         $alertStatus = AlertStatus::tryFrom($this->status);
-        if ($alertStatus === null) {
-            throw new InvalidArgumentException('Invalid alert type');
+        if (null === $alertStatus) {
+            throw new \InvalidArgumentException('Invalid alert type');
         }
+
         return $alertStatus;
     }
 
@@ -40,5 +40,4 @@ class AlertDTO
     {
         return AlertStatus::values();
     }
-
 }

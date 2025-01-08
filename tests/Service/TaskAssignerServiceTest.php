@@ -8,7 +8,6 @@ use App\Entity\Worker;
 use App\Repository\TaskRepository;
 use App\Service\TaskAssignerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -17,13 +16,13 @@ class TaskAssignerServiceTest extends TestCase
     private Worker $worker;
     private TaskAssignerService $service;
 
-    /** @var MockObject&Task $task */
+    /** @var MockObject&Task */
     private Task $task;
 
-    /** @var MockObject&TaskRepository $taskRepository */
+    /** @var MockObject&TaskRepository */
     private TaskRepository $taskRepository;
 
-    /** @var MockObject&EntityManagerInterface $entityManager */
+    /** @var MockObject&EntityManagerInterface */
     private EntityManagerInterface $entityManager;
 
     /**
@@ -40,7 +39,7 @@ class TaskAssignerServiceTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function testAssignTaskSuccess(): void
     {
@@ -63,9 +62,9 @@ class TaskAssignerServiceTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
-    public function testAssignTaskNoTaskAvailable():void
+    public function testAssignTaskNoTaskAvailable(): void
     {
         $this->taskRepository->expects($this->once())
             ->method('findOneBy')
@@ -82,20 +81,20 @@ class TaskAssignerServiceTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
-    public function testAssignTaskExceptionRollback():void
+    public function testAssignTaskExceptionRollback(): void
     {
         $this->taskRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['status' => TaskStatus::NEW, 'worker' => null])
-            ->willThrowException(new Exception('Database error'));
+            ->willThrowException(new \Exception('Database error'));
 
         $this->entityManager->expects($this->once())->method('beginTransaction');
         $this->entityManager->expects($this->once())->method('rollback');
         $this->entityManager->expects($this->never())->method('commit');
 
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Database error');
 
         $this->service->assignTask($this->worker);

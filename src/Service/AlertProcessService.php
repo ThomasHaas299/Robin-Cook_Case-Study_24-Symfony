@@ -7,25 +7,21 @@ use App\Entity\Enum\AlertStatus;
 use App\Repository\AlertRepository;
 use App\Repository\TaskRepository;
 use App\Service\DTO\AlertDTO;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use RuntimeException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 readonly class AlertProcessService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TaskRepository         $taskRepository,
-        private AlertRepository        $alertRepository,
-        private ValidatorInterface     $validator
-    )
-    {
+        private TaskRepository $taskRepository,
+        private AlertRepository $alertRepository,
+        private ValidatorInterface $validator,
+    ) {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function processAlert(string $content): ?Alert
     {
@@ -36,17 +32,17 @@ readonly class AlertProcessService
         try {
             $task = $this->taskRepository->find($data->taskId);
             if (!$task) {
-                throw new RuntimeException('Task not found');
+                throw new \RuntimeException('Task not found');
             }
 
             $alert = $this->alertRepository->findOneBy(['task' => $task]) ?? new Alert();
             $alert->setTask($task);
 
-            if ($alert->getResolvedAt() == null) {
+            if (null == $alert->getResolvedAt()) {
                 // set new values only if alert is not resolved
                 $alert->setStatus($data->getStatus());
-                if ($data->getStatus() === AlertStatus::RESOLVED) {
-                    $alert->setResolvedAt(new DateTimeImmutable());
+                if (AlertStatus::RESOLVED === $data->getStatus()) {
+                    $alert->setResolvedAt(new \DateTimeImmutable());
                 }
                 $alert->setMessage($data->message);
                 $alert->setReason($data->reason);
@@ -57,21 +53,21 @@ readonly class AlertProcessService
             $this->entityManager->commit();
 
             return $alert;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->entityManager->rollback();
             throw $e;
         }
     }
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     private function validateAndDecodeContent(string $content): AlertDTO
     {
         $data = json_decode($content, true);
 
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new RuntimeException('Invalid JSON');
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \RuntimeException('Invalid JSON');
         }
 
         $alertDTO = new AlertDTO();
@@ -82,7 +78,7 @@ readonly class AlertProcessService
 
         $errors = $this->validator->validate($alertDTO);
         if (count($errors) > 0) {
-            throw new RuntimeException((string) $errors);
+            throw new \RuntimeException((string) $errors);
         }
 
         return $alertDTO;

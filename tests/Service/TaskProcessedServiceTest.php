@@ -10,15 +10,14 @@ use App\Service\AlertInvalidationService;
 use App\Service\TaskProcessedService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
-use Exception;
 
 class TaskProcessedServiceTest extends TestCase
 {
     /**
      * @throws \PHPUnit\Framework\MockObject\Exception
-     * @throws Exception
+     * @throws \Exception
      */
-    public function testUpdateTaskStatusSuccess():void
+    public function testUpdateTaskStatusSuccess(): void
     {
         $worker = $this->createMock(Worker::class);
         $task = $this->createMock(Task::class);
@@ -53,9 +52,9 @@ class TaskProcessedServiceTest extends TestCase
 
     /**
      * @throws \PHPUnit\Framework\MockObject\Exception
-     * @throws Exception
+     * @throws \Exception
      */
-    public function testUpdateTaskStatusInvalidStatus():void
+    public function testUpdateTaskStatusInvalidStatus(): void
     {
         $worker = $this->createMock(Worker::class);
 
@@ -63,10 +62,9 @@ class TaskProcessedServiceTest extends TestCase
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $alertInvalidationService = $this->createMock(AlertInvalidationService::class);
 
-
         $service = new TaskProcessedService($entityManager, $taskRepository, $alertInvalidationService);
 
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Invalid status');
 
         $service->updateTaskStatus($worker, '123', 'invalid_status');
@@ -74,9 +72,9 @@ class TaskProcessedServiceTest extends TestCase
 
     /**
      * @throws \PHPUnit\Framework\MockObject\Exception
-     * @throws Exception
+     * @throws \Exception
      */
-    public function testUpdateTaskStatusTaskNotFound():void
+    public function testUpdateTaskStatusTaskNotFound(): void
     {
         $worker = $this->createMock(Worker::class);
 

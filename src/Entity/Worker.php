@@ -10,7 +10,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: WorkerRepository::class)]
 class Worker implements UserInterface
 {
-
     #[ORM\Id]
     #[ORM\Column(type: 'string', length: 36, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -45,7 +44,6 @@ class Worker implements UserInterface
         return $this->accessToken;
     }
 
-
     public function getRoles(): array
     {
         return ['ROLE_WORKER'];
@@ -57,7 +55,7 @@ class Worker implements UserInterface
 
     public function getUserIdentifier(): string
     {
-        return (string)$this->id;
+        return (string) $this->id;
     }
 
     public function setCurrentTask(?Task $currentTask): void
@@ -69,6 +67,4 @@ class Worker implements UserInterface
     {
         return $this->currentTask;
     }
-
-
 }

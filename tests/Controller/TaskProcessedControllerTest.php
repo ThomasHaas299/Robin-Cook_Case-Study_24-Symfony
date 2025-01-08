@@ -17,7 +17,7 @@ class TaskProcessedControllerTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testPostJobStatusSuccess():void
+    public function testPostJobStatusSuccess(): void
     {
         $worker = $this->createMock(Worker::class);
         $task = $this->createMock(Task::class);
@@ -47,7 +47,7 @@ class TaskProcessedControllerTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testPostJobStatusTaskNotFound():void
+    public function testPostJobStatusTaskNotFound(): void
     {
         $worker = $this->createMock(Worker::class);
 
@@ -77,7 +77,7 @@ class TaskProcessedControllerTest extends TestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testPostJobStatusWorkerNotFound():void
+    public function testPostJobStatusWorkerNotFound(): void
     {
         $taskProcessedService = $this->createMock(TaskProcessedService::class);
 

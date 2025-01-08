@@ -6,44 +6,40 @@ use App\Entity\Task;
 use App\Entity\Worker;
 use App\Exceptions\NoTaskAvailableException;
 use App\Service\TaskAssignerService;
-use Exception;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Rest\Route("/task")]
+#[Rest\Route('/task')]
 class TaskController extends AbstractController
 {
-
     public function __construct(private readonly TaskAssignerService $taskAssigner)
     {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
-    #[Rest\Get("/request-task")]
-    #[Rest\View(serializerGroups: ["task"])]
+    #[Rest\Get('/request-task')]
+    #[Rest\View(serializerGroups: ['task'])]
     public function requestJobAction(): Task
     {
         /** @var Worker|null $worker */
         $worker = $this->getUser();
 
-        if ($worker === null) {
-            throw new RuntimeException('Worker not found');
+        if (null === $worker) {
+            throw new \RuntimeException('Worker not found');
         }
 
-        if ($worker->getCurrentTask() !== null) {
-            throw new RuntimeException('Worker already has a task.');
+        if (null !== $worker->getCurrentTask()) {
+            throw new \RuntimeException('Worker already has a task.');
         }
 
         $task = $this->taskAssigner->assignTask($worker);
 
-        if ($task === null) {
+        if (null === $task) {
             throw new NoTaskAvailableException();
         }
 
         return $task;
     }
-
 }

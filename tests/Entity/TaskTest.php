@@ -2,26 +2,25 @@
 
 namespace App\Tests\Entity;
 
-use App\Entity\Task;
 use App\Entity\Enum\TaskStatus;
+use App\Entity\Task;
 use App\Entity\Worker;
-use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
 class TaskTest extends TestCase
 {
-    public function testTaskInitialization():void
+    public function testTaskInitialization(): void
     {
         $task = new Task();
 
         $this->assertNull($task->getId());
         $this->assertEquals(TaskStatus::NEW, $task->getStatus());
-        $this->assertInstanceOf(DateTimeImmutable::class, $task->getCreatedAt());
+        $this->assertInstanceOf(\DateTimeImmutable::class, $task->getCreatedAt());
         $this->assertNull($task->getName());
         $this->assertNull($task->getWorker());
     }
 
-    public function testSetter():void
+    public function testSetter(): void
     {
         $task = new Task();
 
@@ -36,7 +35,5 @@ class TaskTest extends TestCase
         $worker = new Worker();
         $task->setWorker($worker);
         $this->assertEquals($worker, $task->getWorker());
-
     }
-
 }

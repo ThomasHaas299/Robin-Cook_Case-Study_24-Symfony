@@ -11,11 +11,9 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
-use Throwable;
 
 class WorkerAuthenticator extends AbstractAuthenticator
 {
-
     public function __construct(private readonly WorkerRepository $workerRepository)
     {
     }
@@ -57,7 +55,7 @@ class WorkerAuthenticator extends AbstractAuthenticator
     }
 
     /**
-     * @throws Throwable
+     * @throws \Throwable
      */
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {

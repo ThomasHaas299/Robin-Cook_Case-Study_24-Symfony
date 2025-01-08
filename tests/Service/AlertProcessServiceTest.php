@@ -15,17 +15,16 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use RuntimeException;
 
 class AlertProcessServiceTest extends TestCase
 {
-    /** @var EntityManagerInterface&MockObject $entityManager */
+    /** @var EntityManagerInterface&MockObject */
     private EntityManagerInterface $entityManager;
-    /** @var TaskRepository&MockObject $taskRepository */
+    /** @var TaskRepository&MockObject */
     private TaskRepository $taskRepository;
-    /** @var AlertRepository&MockObject $alertRepository */
+    /** @var AlertRepository&MockObject */
     private AlertRepository $alertRepository;
-    /** @var ValidatorInterface&MockObject $validator */
+    /** @var ValidatorInterface&MockObject */
     private ValidatorInterface $validator;
     private AlertProcessService $service;
     private string $jsonContent;
@@ -47,13 +46,12 @@ class AlertProcessServiceTest extends TestCase
             $this->validator
         );
 
-        $this->jsonContent = (string)json_encode([
+        $this->jsonContent = (string) json_encode([
             'task_id' => '123',
             'alert_type' => AlertStatus::OPEN->value,
             'message' => 'Test message',
             'reason' => 'Test reason',
         ]);
-
     }
 
     /**
@@ -84,7 +82,7 @@ class AlertProcessServiceTest extends TestCase
      */
     public function testProcessAlertThrowsExceptionForInvalidJson(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Invalid JSON');
 
         $invalidJsonContent = '{invalid json}';
@@ -97,7 +95,7 @@ class AlertProcessServiceTest extends TestCase
      */
     public function testProcessAlertThrowsExceptionWhenTaskNotFound(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Task not found');
 
         $this->taskRepository->method('find')->willReturn(null);
@@ -112,7 +110,7 @@ class AlertProcessServiceTest extends TestCase
      */
     public function testProcessAlertThrowsExceptionForValidationErrors(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
 
         $violationList = new ConstraintViolationList([
             $this->createMock(ConstraintViolation::class),
@@ -120,6 +118,5 @@ class AlertProcessServiceTest extends TestCase
         $this->validator->method('validate')->willReturn($violationList);
 
         $this->service->processAlert($this->jsonContent);
-
     }
 }

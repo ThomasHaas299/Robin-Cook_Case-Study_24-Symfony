@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Entity\Enum\AlertStatus;
 use App\Repository\AlertRepository;
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -14,18 +13,18 @@ class Alert
 {
     #[ORM\Id]
     #[ORM\OneToOne(targetEntity: Task::class)]
-    #[Serializer\Groups(["task"])]
+    #[Serializer\Groups(['task'])]
     private Task $task;
 
     #[ORM\Column(length: 255)]
-    #[Serializer\Groups(["alert"])]
+    #[Serializer\Groups(['alert'])]
     private AlertStatus $status;
 
     #[ORM\Column]
-    private ?DateTimeImmutable $raisedAt = null;
+    private ?\DateTimeImmutable $raisedAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?DateTimeImmutable $resolvedAt = null;
+    private ?\DateTimeImmutable $resolvedAt = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $message = null;
@@ -50,24 +49,24 @@ class Alert
 
     public function setStatus(AlertStatus $status): void
     {
-        if ($status === AlertStatus::OPEN) {
-            $this->raisedAt = new DateTimeImmutable();
+        if (AlertStatus::OPEN === $status) {
+            $this->raisedAt = new \DateTimeImmutable();
         }
 
         $this->status = $status;
     }
 
-    public function getRaisedAt(): ?DateTimeImmutable
+    public function getRaisedAt(): ?\DateTimeImmutable
     {
         return $this->raisedAt;
     }
 
-    public function getResolvedAt(): ?DateTimeImmutable
+    public function getResolvedAt(): ?\DateTimeImmutable
     {
         return $this->resolvedAt;
     }
 
-    public function setResolvedAt(?DateTimeImmutable $resolvedAt): void
+    public function setResolvedAt(?\DateTimeImmutable $resolvedAt): void
     {
         $this->resolvedAt = $resolvedAt;
     }

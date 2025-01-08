@@ -7,35 +7,32 @@ use App\Entity\Task;
 use App\Entity\Worker;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 
 readonly class TaskAssignerService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TaskRepository         $taskRepository
-    )
-    {
+        private TaskRepository $taskRepository,
+    ) {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function assignTask(Worker $worker): ?Task
     {
-
         $this->entityManager->beginTransaction();
 
         try {
-
             // find a free Task
             $task = $this->taskRepository->findOneBy([
                 'status' => TaskStatus::NEW,
-                'worker' => null
+                'worker' => null,
             ]);
 
             if (!$task) {
                 $this->entityManager->commit();
+
                 return null;
             }
 
@@ -48,11 +45,11 @@ readonly class TaskAssignerService
             $this->entityManager->flush();
 
             $this->entityManager->commit();
+
             return $task;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->entityManager->rollback();
             throw $e;
         }
-
     }
 }

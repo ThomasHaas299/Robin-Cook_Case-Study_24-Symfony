@@ -7,35 +7,30 @@ use App\Entity\Task;
 use App\Entity\Worker;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 
 readonly class TaskProcessedService
 {
-
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TaskRepository         $taskRepository,
-        private AlertInvalidationService $alertInvalidationService
-    )
-    {
+        private TaskRepository $taskRepository,
+        private AlertInvalidationService $alertInvalidationService,
+    ) {
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function updateTaskStatus(Worker $worker, string $id, string $status): ?Task
     {
-
         $statusEnum = TaskStatus::tryFrom($status);
 
         // allow only TaskStatus::COMPLETED or TaskStatus::FAILED
         if (!in_array($statusEnum, [TaskStatus::COMPLETED, TaskStatus::FAILED])) {
-            throw new Exception('Invalid status');
+            throw new \Exception('Invalid status');
         }
 
         $this->entityManager->beginTransaction();
         try {
-
             // find the task with the given id and worker
             $task = $this->taskRepository->findOneBy([
                 'id' => $id,
@@ -45,6 +40,7 @@ readonly class TaskProcessedService
 
             if (!$task) {
                 $this->entityManager->commit();
+
                 return null;
             }
 
@@ -53,7 +49,7 @@ readonly class TaskProcessedService
 
             $worker->setCurrentTask(null);
 
-            if ($statusEnum === TaskStatus::COMPLETED) {
+            if (TaskStatus::COMPLETED === $statusEnum) {
                 $this->alertInvalidationService->invalidateAlert($task);
             }
 
@@ -61,11 +57,11 @@ readonly class TaskProcessedService
             $this->entityManager->flush();
 
             $this->entityManager->commit();
+
             return $task;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->entityManager->rollback();
             throw $e;
         }
-
     }
 }

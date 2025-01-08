@@ -2,12 +2,8 @@
 
 namespace App\Exceptions;
 
-use Exception;
-
-class TaskNotFoundException extends Exception
+class TaskNotFoundException extends \Exception
 {
-
-    const ERROR = 'Not Found';
-    const MESSAGE = 'The requested task could not be found.';
-
+    public const ERROR = 'Not Found';
+    public const MESSAGE = 'The requested task could not be found.';
 }

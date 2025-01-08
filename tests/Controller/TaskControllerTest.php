@@ -8,7 +8,6 @@ use App\Entity\Worker;
 use App\Exceptions\NoTaskAvailableException;
 use App\Service\TaskAssignerService;
 use PHPUnit\Framework\MockObject\Exception;
-use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TaskControllerTest extends WebTestCase
@@ -17,7 +16,7 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testRequestJobActionSuccess():void
+    public function testRequestJobActionSuccess(): void
     {
         $worker = $this->createMock(Worker::class);
         $task = $this->createMock(Task::class);
@@ -47,7 +46,7 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testRequestJobActionNoWorker():void
+    public function testRequestJobActionNoWorker(): void
     {
         $taskAssignerService = $this->createMock(TaskAssignerService::class);
 
@@ -60,7 +59,7 @@ class TaskControllerTest extends WebTestCase
             ->method('getUser')
             ->willReturn(null);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Worker not found');
 
         $controller->requestJobAction();
@@ -70,7 +69,7 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testRequestJobActionWorkerHasTask():void
+    public function testRequestJobActionWorkerHasTask(): void
     {
         $worker = $this->createMock(Worker::class);
         $task = $this->createMock(Task::class);
@@ -90,7 +89,7 @@ class TaskControllerTest extends WebTestCase
             ->method('getUser')
             ->willReturn($worker);
 
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Worker already has a task.');
 
         $controller->requestJobAction();
@@ -100,7 +99,7 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testRequestJobActionNoTaskAvailable():void
+    public function testRequestJobActionNoTaskAvailable(): void
     {
         $worker = $this->createMock(Worker::class);
 

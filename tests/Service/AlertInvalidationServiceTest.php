@@ -2,24 +2,21 @@
 
 namespace App\Tests\Service;
 
+use App\Entity\Alert;
 use App\Entity\Enum\AlertStatus;
 use App\Entity\Task;
-use App\Entity\Alert;
 use App\Repository\AlertRepository;
 use App\Service\AlertInvalidationService;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
-use Throwable;
 
 class AlertInvalidationServiceTest extends TestCase
 {
-    /** @var MockObject&EntityManagerInterface $entityManager */
+    /** @var MockObject&EntityManagerInterface */
     private EntityManagerInterface $entityManager;
-    /** @var MockObject&AlertRepository $alertRepository */
+    /** @var MockObject&AlertRepository */
     private AlertRepository $alertRepository;
     private AlertInvalidationService $service;
     private Task $task;
@@ -50,7 +47,7 @@ class AlertInvalidationServiceTest extends TestCase
         $this->entityManager->expects($this->once())->method('commit');
 
         $alert->expects($this->once())->method('setStatus')->with(AlertStatus::RESOLVED);
-        $alert->expects($this->once())->method('setResolvedAt')->with($this->isInstanceOf(DateTimeImmutable::class));
+        $alert->expects($this->once())->method('setResolvedAt')->with($this->isInstanceOf(\DateTimeImmutable::class));
 
         $this->service->invalidateAlert($this->task);
     }
@@ -75,7 +72,7 @@ class AlertInvalidationServiceTest extends TestCase
      */
     public function testInvalidateAlertThrowsExceptionOnFailure(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Failed to invalidate alert.');
 
         $this->alertRepository->method('findOneBy')->with(['task' => $this->task])->willThrowException(new \Exception('Some database error'));

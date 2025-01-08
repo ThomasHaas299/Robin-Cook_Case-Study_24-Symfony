@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Entity\Enum\TaskStatus;
 use App\Repository\TaskRepository;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -15,12 +14,12 @@ class Task
     #[ORM\Column(type: 'string', length: 36, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
-    #[Serializer\Groups(["task"])]
+    #[Serializer\Groups(['task'])]
     /** @phpstan-ignore-next-line */
     private ?string $id = null;
 
     #[ORM\Column]
-    #[Serializer\Groups(["task"])]
+    #[Serializer\Groups(['task'])]
     private TaskStatus $status;
 
     #[ORM\Column(length: 255)]
@@ -28,7 +27,7 @@ class Task
 
     #[ORM\Column]
     /** @phpstan-ignore-next-line */
-    private ?DateTimeImmutable $createdAt;
+    private ?\DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Worker::class)]
     private ?Worker $worker = null;
@@ -36,7 +35,7 @@ class Task
     public function __construct()
     {
         $this->status = TaskStatus::NEW;
-        $this->createdAt = new DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?string
@@ -59,7 +58,7 @@ class Task
         return $this->status;
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }

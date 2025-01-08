@@ -44,14 +44,12 @@ final readonly class ExceptionListener
             $statusCode = 404;
         }
 
-
         $view = View::create([
             'error' => $error,
-            'message' => $message
+            'message' => $message,
         ], $statusCode);
 
         $response = $this->viewHandler->handle($view);
         $event->setResponse($response);
-
     }
 }
