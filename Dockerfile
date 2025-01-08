@@ -1,5 +1,5 @@
 # Use an official PHP runtime as a parent image
-FROM dunglas/frankenphp AS api-template
+FROM dunglas/frankenphp:php8.3 AS api-template
 
 
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer

@@ -27,7 +27,11 @@
     "require-dev": {
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.4",
-        "symfony/maker-bundle": "^1.61"
+        "symfony/debug-bundle": "7.1.*",
+        "symfony/maker-bundle": "^1.61",
+        "symfony/monolog-bundle": "^3.0",
+        "symfony/stopwatch": "7.1.*",
+        "symfony/web-profiler-bundle": "7.1.*"
     },
     "config": {
         "allow-plugins": {
