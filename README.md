@@ -65,6 +65,6 @@ Also, the code is always pure english.
 - `docker compose exec api vendor/bin/phpstan`
 - `docker compose exec api vendor/bin/phpunit`
 - `docker compose exec api bin/console`
-- `docker compose exec api scripts/request-job.sh`
-- `docker compose exec api scripts/finish-job.sh`
-- `docker compose exec api scripts/alert.sh`
+- `docker compose exec api test-scripts/request-job.sh`
+- `docker compose exec api test-scripts/finish-job.sh`
+- `docker compose exec api test-scripts/alert.sh`

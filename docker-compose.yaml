@@ -6,7 +6,7 @@ services:
         volumes:
             - .:/app
         ports:
-            - 10001:80
+            - "10001:80"
         restart: unless-stopped
         depends_on:
             - database
@@ -22,7 +22,7 @@ services:
             MYSQL_PASSWORD:      symfony
         volumes:
             - mariadb_data:/var/lib/mysql:rw,delegated
-        restart: no
+        restart: unless-stopped
         extra_hosts:
             - "host.docker.internal:host-gateway"
 
@@ -31,7 +31,7 @@ services:
         restart: unless-stopped
         ports:
             # HTTP
-            - 127.0.0.1:10010:80
+            - "127.0.0.1:10010:80"
         environment:
             MYSQL_ROOT_PASSWORD: root
             PMA_HOST:            database
