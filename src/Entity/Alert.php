@@ -38,7 +38,7 @@ class Alert
         return $this->task;
     }
 
-    public function setTask(Task $task)
+    public function setTask(Task $task): void
     {
         $this->task = $task;
     }
@@ -55,7 +55,11 @@ class Alert
         }
 
         $this->status = $status;
+    }
 
+    public function getRaisedAt(): ?DateTimeImmutable
+    {
+        return $this->raisedAt;
     }
 
     public function getResolvedAt(): ?DateTimeImmutable

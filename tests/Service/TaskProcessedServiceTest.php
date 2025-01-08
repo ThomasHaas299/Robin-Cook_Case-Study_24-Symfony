@@ -5,8 +5,8 @@ namespace App\Tests\Service;
 use App\Entity\Enum\TaskStatus;
 use App\Entity\Task;
 use App\Entity\Worker;
-use App\Exceptions\TaskNotFoundException;
 use App\Repository\TaskRepository;
+use App\Service\AlertInvalidationService;
 use App\Service\TaskProcessedService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -39,11 +39,13 @@ class TaskProcessedServiceTest extends TestCase
         $entityManager->expects($this->once())->method('flush');
         $entityManager->expects($this->once())->method('commit');
 
+        $alertInvalidationService = $this->createMock(AlertInvalidationService::class);
+
         $task->expects($this->once())->method('setStatus')->with(TaskStatus::COMPLETED);
         $task->expects($this->once())->method('setWorker')->with(null);
         $worker->expects($this->once())->method('setCurrentTask')->with(null);
 
-        $service = new TaskProcessedService($entityManager, $taskRepository);
+        $service = new TaskProcessedService($entityManager, $taskRepository, $alertInvalidationService);
         $result = $service->updateTaskStatus($worker, '123', 'completed');
 
         $this->assertSame($task, $result);
@@ -59,8 +61,10 @@ class TaskProcessedServiceTest extends TestCase
 
         $taskRepository = $this->createMock(TaskRepository::class);
         $entityManager = $this->createMock(EntityManagerInterface::class);
+        $alertInvalidationService = $this->createMock(AlertInvalidationService::class);
 
-        $service = new TaskProcessedService($entityManager, $taskRepository);
+
+        $service = new TaskProcessedService($entityManager, $taskRepository, $alertInvalidationService);
 
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Invalid status');
@@ -91,7 +95,9 @@ class TaskProcessedServiceTest extends TestCase
         $entityManager->expects($this->once())->method('commit');
         $entityManager->expects($this->never())->method('rollback');
 
-        $service = new TaskProcessedService($entityManager, $taskRepository);
+        $alertInvalidationService = $this->createMock(AlertInvalidationService::class);
+
+        $service = new TaskProcessedService($entityManager, $taskRepository, $alertInvalidationService);
 
         $result = $service->updateTaskStatus($worker, '123', 'completed');
 

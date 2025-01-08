@@ -16,6 +16,7 @@ class Task
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     #[Serializer\Groups(["task"])]
+    /** @phpstan-ignore-next-line */
     private ?string $id = null;
 
     #[ORM\Column]
@@ -26,6 +27,7 @@ class Task
     private ?string $name = null;
 
     #[ORM\Column]
+    /** @phpstan-ignore-next-line */
     private ?DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Worker::class)]

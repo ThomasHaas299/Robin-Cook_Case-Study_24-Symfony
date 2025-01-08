@@ -15,6 +15,7 @@ class Worker implements UserInterface
     #[ORM\Column(type: 'string', length: 36, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    /** @phpstan-ignore-next-line */
     private ?string $id = null;
 
     #[ORM\Column]
@@ -56,7 +57,7 @@ class Worker implements UserInterface
 
     public function getUserIdentifier(): string
     {
-        return $this->id;
+        return (string)$this->id;
     }
 
     public function setCurrentTask(?Task $currentTask): void

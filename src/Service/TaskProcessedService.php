@@ -14,7 +14,8 @@ readonly class TaskProcessedService
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private TaskRepository         $taskRepository
+        private TaskRepository         $taskRepository,
+        private AlertInvalidationService $alertInvalidationService
     )
     {
     }
@@ -51,6 +52,10 @@ readonly class TaskProcessedService
             $task->setWorker(null);
 
             $worker->setCurrentTask(null);
+
+            if ($statusEnum === TaskStatus::COMPLETED) {
+                $this->alertInvalidationService->invalidateAlert($task);
+            }
 
             $this->entityManager->persist($task);
             $this->entityManager->flush();
