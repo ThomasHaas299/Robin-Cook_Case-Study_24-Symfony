@@ -9,8 +9,9 @@ use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
-readonly class TaskAssignerService
+readonly class TaskProcessedService
 {
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private TaskRepository         $taskRepository
@@ -21,17 +22,24 @@ readonly class TaskAssignerService
     /**
      * @throws Exception
      */
-    public function assignTask(Worker $worker): ?Task
+    public function updateTaskStatus(Worker $worker, string $id, string $status): ?Task
     {
 
-        $this->entityManager->beginTransaction();
+        $statusEnum = TaskStatus::tryFrom($status);
 
+        // allow only TaskStatus::COMPLETED or TaskStatus::FAILED
+        if (!in_array($statusEnum, [TaskStatus::COMPLETED, TaskStatus::FAILED])) {
+            throw new Exception('Invalid status');
+        }
+
+        $this->entityManager->beginTransaction();
         try {
 
-            // find a free Task
+            // find the task with the given id and worker
             $task = $this->taskRepository->findOneBy([
-                'status' => TaskStatus::NEW,
-                'worker' => null
+                'id' => $id,
+                'status' => TaskStatus::IN_PROGRESS,
+                'worker' => $worker,
             ]);
 
             if (!$task) {
@@ -39,8 +47,8 @@ readonly class TaskAssignerService
                 return null;
             }
 
-            $task->setStatus(TaskStatus::IN_PROGRESS);
-            $task->setWorker($worker);
+            $task->setStatus($statusEnum);
+            $task->setWorker(null);
             $this->entityManager->persist($task);
             $this->entityManager->flush();
 

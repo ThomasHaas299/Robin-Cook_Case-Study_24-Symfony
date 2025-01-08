@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use App\Exceptions\NoTaskAvailableException;
+use App\Exceptions\TaskNotFoundException;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -37,7 +38,12 @@ final readonly class ExceptionListener
             $error = NoTaskAvailableException::ERROR;
             $message = NoTaskAvailableException::MESSAGE;
             $statusCode = 404;
+        } elseif ($exception instanceof TaskNotFoundException) {
+            $error = TaskNotFoundException::ERROR;
+            $message = TaskNotFoundException::MESSAGE;
+            $statusCode = 404;
         }
+
 
         $view = View::create([
             'error' => $error,
