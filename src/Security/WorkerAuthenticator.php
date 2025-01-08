@@ -46,7 +46,7 @@ class WorkerAuthenticator extends AbstractAuthenticator
         };
 
         return new SelfValidatingPassport(
-            new UserBadge($workerId, $userBadgeCallback)
+            new UserBadge((string) $workerId, $userBadgeCallback)
         );
     }
 

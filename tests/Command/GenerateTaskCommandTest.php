@@ -15,7 +15,7 @@ class GenerateTaskCommandTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testExecute()
+    public function testExecute(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->once())

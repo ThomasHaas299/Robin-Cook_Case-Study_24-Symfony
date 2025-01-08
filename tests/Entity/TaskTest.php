@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class TaskTest extends TestCase
 {
-    public function testTaskInitialization()
+    public function testTaskInitialization():void
     {
         $task = new Task();
 
@@ -21,7 +21,7 @@ class TaskTest extends TestCase
         $this->assertNull($task->getWorker());
     }
 
-    public function testSetter()
+    public function testSetter():void
     {
         $task = new Task();
 

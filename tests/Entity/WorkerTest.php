@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class WorkerTest extends TestCase
 {
-    public function testWorkerInitialization()
+    public function testWorkerInitialization():void
     {
         $worker = new Worker();
         $this->assertNotEmpty($worker->getAccessToken());

@@ -7,6 +7,7 @@ use App\Exceptions\NoTaskAvailableException;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use PHPUnit\Framework\MockObject\Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class ExceptionListenerTest extends TestCase
 {
+    /** @var MockObject&ViewHandlerInterface $viewHandler */
     private ViewHandlerInterface $viewHandler;
     private ExceptionListener $listener;
     private HttpKernelInterface $kernel;
@@ -36,7 +38,7 @@ class ExceptionListenerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testOnKernelExceptionWithNoTaskAvailableException()
+    public function testOnKernelExceptionWithNoTaskAvailableException():void
     {
         $this->viewHandler->expects($this->once())
             ->method('handle')
@@ -61,7 +63,7 @@ class ExceptionListenerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testOnKernelExceptionWithNotFoundHttpException()
+    public function testOnKernelExceptionWithNotFoundHttpException():void
     {
         $this->viewHandler->expects($this->once())
             ->method('handle')
@@ -85,7 +87,7 @@ class ExceptionListenerTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testOnKernelExceptionWithGenericException()
+    public function testOnKernelExceptionWithGenericException():void
     {
         $this->viewHandler->expects($this->once())
             ->method('handle')

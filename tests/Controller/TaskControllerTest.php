@@ -17,7 +17,7 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testRequestJobActionSuccess()
+    public function testRequestJobActionSuccess():void
     {
         $worker = $this->createMock(Worker::class);
         $task = $this->createMock(Task::class);
@@ -47,7 +47,7 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testRequestJobActionNoWorker()
+    public function testRequestJobActionNoWorker():void
     {
         $taskAssignerService = $this->createMock(TaskAssignerService::class);
 
@@ -70,7 +70,7 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
-    public function testRequestJobActionNoTaskAvailable()
+    public function testRequestJobActionNoTaskAvailable():void
     {
         $worker = $this->createMock(Worker::class);
 

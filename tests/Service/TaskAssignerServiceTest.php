@@ -9,15 +9,22 @@ use App\Repository\TaskRepository;
 use App\Service\TaskAssignerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class TaskAssignerServiceTest extends TestCase
 {
     private Worker $worker;
-    private Task $task;
-    private TaskRepository $taskRepository;
-    private EntityManagerInterface $entityManager;
     private TaskAssignerService $service;
+
+    /** @var MockObject&Task $task */
+    private Task $task;
+
+    /** @var MockObject&TaskRepository $taskRepository */
+    private TaskRepository $taskRepository;
+
+    /** @var MockObject&EntityManagerInterface $entityManager */
+    private EntityManagerInterface $entityManager;
 
     /**
      * @throws \PHPUnit\Framework\MockObject\Exception
@@ -35,7 +42,7 @@ class TaskAssignerServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testAssignTaskSuccess()
+    public function testAssignTaskSuccess(): void
     {
         $this->taskRepository->expects($this->once())
             ->method('findOneBy')
@@ -58,7 +65,7 @@ class TaskAssignerServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testAssignTaskNoTaskAvailable()
+    public function testAssignTaskNoTaskAvailable():void
     {
         $this->taskRepository->expects($this->once())
             ->method('findOneBy')
@@ -77,7 +84,7 @@ class TaskAssignerServiceTest extends TestCase
     /**
      * @throws Exception
      */
-    public function testAssignTaskExceptionRollback()
+    public function testAssignTaskExceptionRollback():void
     {
         $this->taskRepository->expects($this->once())
             ->method('findOneBy')
