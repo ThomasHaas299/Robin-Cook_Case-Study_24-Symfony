@@ -66,4 +66,14 @@ class Task
     {
         return $this->worker;
     }
+
+    public function setStatus(TaskStatus $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function setWorker(?Worker $worker): void
+    {
+        $this->worker = $worker;
+    }
 }

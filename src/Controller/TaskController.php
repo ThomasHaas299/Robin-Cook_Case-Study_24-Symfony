@@ -3,20 +3,43 @@
 namespace App\Controller;
 
 use App\Entity\Task;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Entity\Worker;
+use App\Exceptions\NoTaskAvailableException;
+use App\Service\TaskAssignerService;
+use Exception;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 
 #[Rest\Route("/task")]
 class TaskController extends AbstractController
 {
 
+    public function __construct(private readonly TaskAssignerService $taskAssigner)
+    {
+    }
+
+    /**
+     * @throws Exception
+     */
     #[Rest\Get("/request-task")]
     #[Rest\View(serializerGroups: ["task"])]
-    public function requestJobAction(Request $request, EntityManagerInterface $em): Task
+    public function requestJobAction(): Task
     {
-        return $em->getRepository(Task::class)->findTaskForWorker();
+        /** @var Worker|null $worker */
+        $worker = $this->getUser();
+
+        if ($worker === null) {
+            throw new RuntimeException('Worker not found');
+        }
+
+        $task = $this->taskAssigner->assignTask($worker);
+
+        if ($task === null) {
+            throw new NoTaskAvailableException();
+        }
+
+        return $task;
     }
 
 }

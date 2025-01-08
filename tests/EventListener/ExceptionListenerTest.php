@@ -3,6 +3,7 @@
 namespace App\Tests\EventListener;
 
 use App\EventListener\ExceptionListener;
+use App\Exceptions\NoTaskAvailableException;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\View\ViewHandlerInterface;
 use PHPUnit\Framework\MockObject\Exception;
@@ -15,13 +16,54 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class ExceptionListenerTest extends TestCase
 {
+    private ViewHandlerInterface $viewHandler;
+    private ExceptionListener $listener;
+    private HttpKernelInterface $kernel;
+    private Request $request;
+
+    /**
+     * @throws Exception
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->viewHandler = $this->createMock(ViewHandlerInterface::class);
+        $this->listener = new ExceptionListener($this->viewHandler);
+        $this->kernel = $this->createMock(HttpKernelInterface::class);
+        $this->request = $this->createMock(Request::class);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testOnKernelExceptionWithNoTaskAvailableException()
+    {
+        $this->viewHandler->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(function (View $view) {
+                $data = $view->getData();
+                return $data['error'] === NoTaskAvailableException::ERROR && $data['message'] === NoTaskAvailableException::MESSAGE;
+            }))
+            ->willReturn(new Response(NoTaskAvailableException::ERROR, 404));
+
+        $exception = new NoTaskAvailableException();
+        $event = new ExceptionEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $exception);
+
+        $this->listener->onKernelException($event);
+
+        $response = $event->getResponse();
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals(NoTaskAvailableException::ERROR, $response->getContent());
+    }
+
+
     /**
      * @throws Exception
      */
     public function testOnKernelExceptionWithNotFoundHttpException()
     {
-        $viewHandler = $this->createMock(ViewHandlerInterface::class);
-        $viewHandler->expects($this->once())
+        $this->viewHandler->expects($this->once())
             ->method('handle')
             ->with($this->callback(function (View $view) {
                 $data = $view->getData();
@@ -29,13 +71,10 @@ class ExceptionListenerTest extends TestCase
             }))
             ->willReturn(new Response('Not Found', 404));
 
-        $listener = new ExceptionListener($viewHandler);
-
-        $kernel = $this->createMock(HttpKernelInterface::class);
         $exception = new NotFoundHttpException();
-        $event = new ExceptionEvent($kernel, $this->createMock(Request::class), HttpKernelInterface::MAIN_REQUEST, $exception);
+        $event = new ExceptionEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $listener->onKernelException($event);
+        $this->listener->onKernelException($event);
 
         $response = $event->getResponse();
         $this->assertInstanceOf(Response::class, $response);
@@ -48,8 +87,7 @@ class ExceptionListenerTest extends TestCase
      */
     public function testOnKernelExceptionWithGenericException()
     {
-        $viewHandler = $this->createMock(ViewHandlerInterface::class);
-        $viewHandler->expects($this->once())
+        $this->viewHandler->expects($this->once())
             ->method('handle')
             ->with($this->callback(function (View $view) {
                 $data = $view->getData();
@@ -57,13 +95,10 @@ class ExceptionListenerTest extends TestCase
             }))
             ->willReturn(new Response('An error occurred', 500));
 
-        $listener = new ExceptionListener($viewHandler);
-
-        $kernel = $this->createMock(HttpKernelInterface::class);
         $exception = new \Exception('Generic error');
-        $event = new ExceptionEvent($kernel, $this->createMock(Request::class), HttpKernelInterface::MAIN_REQUEST, $exception);
+        $event = new ExceptionEvent($this->kernel, $this->request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $listener->onKernelException($event);
+        $this->listener->onKernelException($event);
 
         $response = $event->getResponse();
         $this->assertInstanceOf(Response::class, $response);

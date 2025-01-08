@@ -4,6 +4,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\Task;
 use App\Entity\Enum\TaskStatus;
+use App\Entity\Worker;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
@@ -20,11 +21,22 @@ class TaskTest extends TestCase
         $this->assertNull($task->getWorker());
     }
 
-    public function testSetName()
+    public function testSetter()
     {
         $task = new Task();
-        $task->setName('Test Task');
 
+        $task->setName('Test Task');
         $this->assertEquals('Test Task', $task->getName());
+
+        $this->assertEquals(TaskStatus::NEW, $task->getStatus());
+        $task->setStatus(TaskStatus::IN_PROGRESS);
+        $this->assertEquals(TaskStatus::IN_PROGRESS, $task->getStatus());
+
+        $this->assertNull($task->getWorker());
+        $worker = new Worker();
+        $task->setWorker($worker);
+        $this->assertEquals($worker, $task->getWorker());
+
     }
+
 }
