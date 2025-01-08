@@ -83,7 +83,7 @@ class Alert
         return $this->reason;
     }
 
-    public function setReason(string $reason): void
+    public function setReason(?string $reason): void
     {
         $this->reason = $reason;
     }

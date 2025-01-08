@@ -6,17 +6,20 @@ use App\Entity\Alert;
 use App\Entity\Enum\AlertStatus;
 use App\Repository\AlertRepository;
 use App\Repository\TaskRepository;
+use App\Service\DTO\AlertDTO;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use RuntimeException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 readonly class AlertProcessService
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
         private TaskRepository         $taskRepository,
-        private AlertRepository        $alertRepository
+        private AlertRepository        $alertRepository,
+        private ValidatorInterface     $validator
     )
     {
     }
@@ -31,7 +34,7 @@ readonly class AlertProcessService
         $this->entityManager->beginTransaction();
 
         try {
-            $task = $this->taskRepository->find($data->task_id);
+            $task = $this->taskRepository->find($data->taskId);
             if (!$task) {
                 throw new RuntimeException('Task not found');
             }
@@ -41,12 +44,12 @@ readonly class AlertProcessService
 
             if ($alert->getResolvedAt() == null) {
                 // set new values only if alert is not resolved
-                $alert->setStatus($data->alert_type);
-                if ($data->alert_type === AlertStatus::RESOLVED) {
+                $alert->setStatus($data->getStatus());
+                if ($data->getStatus() === AlertStatus::RESOLVED) {
                     $alert->setResolvedAt(new DateTimeImmutable());
                 }
-                $alert->setMessage($data->message ?? null);
-                $alert->setReason($data->reason ?? null);
+                $alert->setMessage($data->message);
+                $alert->setReason($data->reason);
             }
 
             $this->entityManager->persist($alert);
@@ -63,24 +66,25 @@ readonly class AlertProcessService
     /**
      * @throws RuntimeException
      */
-    private function validateAndDecodeContent(string $content): object
+    private function validateAndDecodeContent(string $content): AlertDTO
     {
-        $data = json_decode($content);
+        $data = json_decode($content, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new RuntimeException('Invalid JSON');
         }
 
-        if (!isset($data->task_id)) {
-            throw new RuntimeException('No Task ID provided');
+        $alertDTO = new AlertDTO();
+        $alertDTO->taskId = $data['task_id'] ?? '';
+        $alertDTO->status = $data['alert_type'] ?? null;
+        $alertDTO->message = $data['message'] ?? null;
+        $alertDTO->reason = $data['reason'] ?? null;
+
+        $errors = $this->validator->validate($alertDTO);
+        if (count($errors) > 0) {
+            throw new RuntimeException((string) $errors);
         }
 
-        $data->alert_type = AlertStatus::tryFrom($data->alert_type);
-
-        if (!isset($data->alert_type)) {
-            throw new RuntimeException('No valid Alert Type provided. Alert Type must be one of: ' . implode(', ', AlertStatus::values()) . '.');
-        }
-
-        return $data;
+        return $alertDTO;
     }
 }
