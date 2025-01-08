@@ -33,6 +33,10 @@ class TaskController extends AbstractController
             throw new RuntimeException('Worker not found');
         }
 
+        if ($worker->getCurrentTask() !== null) {
+            throw new RuntimeException('Worker already has a task.');
+        }
+
         $task = $this->taskAssigner->assignTask($worker);
 
         if ($task === null) {

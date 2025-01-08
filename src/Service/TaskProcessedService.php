@@ -49,6 +49,9 @@ readonly class TaskProcessedService
 
             $task->setStatus($statusEnum);
             $task->setWorker(null);
+
+            $worker->setCurrentTask(null);
+
             $this->entityManager->persist($task);
             $this->entityManager->flush();
 

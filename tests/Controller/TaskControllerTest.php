@@ -70,6 +70,36 @@ class TaskControllerTest extends WebTestCase
      * @throws Exception
      * @throws \Exception
      */
+    public function testRequestJobActionWorkerHasTask():void
+    {
+        $worker = $this->createMock(Worker::class);
+        $task = $this->createMock(Task::class);
+
+        $worker->expects($this->once())
+            ->method('getCurrentTask')
+            ->willReturn($task);
+
+        $taskAssignerService = $this->createMock(TaskAssignerService::class);
+
+        $controller = $this->getMockBuilder(TaskController::class)
+            ->setConstructorArgs([$taskAssignerService])
+            ->onlyMethods(['getUser'])
+            ->getMock();
+
+        $controller->expects($this->once())
+            ->method('getUser')
+            ->willReturn($worker);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Worker already has a task.');
+
+        $controller->requestJobAction();
+    }
+
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
     public function testRequestJobActionNoTaskAvailable():void
     {
         $worker = $this->createMock(Worker::class);

@@ -23,6 +23,9 @@ class Worker implements UserInterface
     #[ORM\Column(nullable: false)]
     private string $accessToken;
 
+    #[ORM\OneToOne(targetEntity: Task::class)]
+    private ?Task $currentTask = null;
+
     /**
      * @throws RandomException
      */
@@ -55,4 +58,16 @@ class Worker implements UserInterface
     {
         return $this->id;
     }
+
+    public function setCurrentTask(?Task $currentTask): void
+    {
+        $this->currentTask = $currentTask;
+    }
+
+    public function getCurrentTask(): ?Task
+    {
+        return $this->currentTask;
+    }
+
+
 }

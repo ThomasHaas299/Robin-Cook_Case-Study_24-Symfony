@@ -41,6 +41,9 @@ readonly class TaskAssignerService
 
             $task->setStatus(TaskStatus::IN_PROGRESS);
             $task->setWorker($worker);
+
+            $worker->setCurrentTask($task);
+
             $this->entityManager->persist($task);
             $this->entityManager->flush();
 
