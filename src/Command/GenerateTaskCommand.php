@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 class GenerateTaskCommand extends Command
 {
-    public function __construct(#[Autowire('@service_container')] private readonly ContainerInterface $container)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
         parent::__construct();
     }
@@ -28,9 +28,8 @@ class GenerateTaskCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $task = new Task();
         $task->setName('Task created at '.(new DateTimeImmutable())->format('Y-m-d H:i:s'));
-        $em = $this->container->get(EntityManagerInterface::class);
-        $em->persist($task);
-        $em->flush();
+        $this->em->persist($task);
+        $this->em->flush();
 
         $io->success('Task created successfully!');
 

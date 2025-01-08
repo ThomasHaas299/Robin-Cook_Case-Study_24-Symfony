@@ -22,9 +22,33 @@ class Task
     #[Serializer\Groups(["task"])]
     private TaskStatus $status;
 
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\Column]
+    private ?DateTimeImmutable $createdAt;
+
+    #[ORM\ManyToOne(targetEntity: Worker::class)]
+    private ?Worker $worker = null;
+
     public function __construct()
     {
         $this->status = TaskStatus::NEW;
         $this->createdAt = new DateTimeImmutable();
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 }
