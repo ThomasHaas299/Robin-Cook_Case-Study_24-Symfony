@@ -23,12 +23,13 @@ readonly class AlertInvalidationService
         $this->entityManager->beginTransaction();
         try {
             $alert = $this->alertRepository->findOneBy(['task' => $task]);
-            if (!$alert) {
+            if (!$alert || AlertStatus::RESOLVED === $alert->getStatus()) {
                 // do nothing if alert is not found
                 $this->entityManager->rollback();
 
                 return;
             }
+
             $alert->setStatus(AlertStatus::RESOLVED);
             $alert->setResolvedAt(new \DateTimeImmutable());
 

@@ -22,6 +22,18 @@ class AlertInvalidationServiceTest extends TestCase
     private Task $task;
 
     /**
+     * @return void
+     */
+    public function assertEntityManagerRollback(): void
+    {
+        $this->entityManager->expects($this->once())->method('beginTransaction');
+        $this->entityManager->expects($this->once())->method('rollback');
+        $this->entityManager->expects($this->never())->method('persist');
+        $this->entityManager->expects($this->never())->method('flush');
+        $this->entityManager->expects($this->never())->method('commit');
+    }
+
+    /**
      * @throws Exception
      */
     protected function setUp(): void
@@ -39,6 +51,7 @@ class AlertInvalidationServiceTest extends TestCase
     public function testInvalidateAlertSuccessfullyResolvesAlert(): void
     {
         $alert = $this->createMock(Alert::class);
+        $alert->method('getStatus')->willReturn(AlertStatus::OPEN);
 
         $this->alertRepository->method('findOneBy')->with(['task' => $this->task])->willReturn($alert);
         $this->entityManager->expects($this->once())->method('beginTransaction');
@@ -58,11 +71,22 @@ class AlertInvalidationServiceTest extends TestCase
     public function testInvalidateAlertDoesNothingIfNoAlertFound(): void
     {
         $this->alertRepository->method('findOneBy')->with(['task' => $this->task])->willReturn(null);
-        $this->entityManager->expects($this->once())->method('beginTransaction');
-        $this->entityManager->expects($this->once())->method('rollback');
-        $this->entityManager->expects($this->never())->method('persist');
-        $this->entityManager->expects($this->never())->method('flush');
-        $this->entityManager->expects($this->never())->method('commit');
+        $this->assertEntityManagerRollback();
+
+        $this->service->invalidateAlert($this->task);
+    }
+
+    /**
+     * @throws \Exception
+     * @throws Exception
+     */
+    public function testInvalidateAlertDoesNothingIfAlertAlreadyResolved(): void
+    {
+        $alert = $this->createMock(Alert::class);
+        $alert->method('getStatus')->willReturn(AlertStatus::RESOLVED);
+
+        $this->alertRepository->method('findOneBy')->with(['task' => $this->task])->willReturn($alert);
+        $this->assertEntityManagerRollback();
 
         $this->service->invalidateAlert($this->task);
     }
@@ -76,11 +100,7 @@ class AlertInvalidationServiceTest extends TestCase
         $this->expectExceptionMessage('Failed to invalidate alert.');
 
         $this->alertRepository->method('findOneBy')->with(['task' => $this->task])->willThrowException(new \Exception('Some database error'));
-        $this->entityManager->expects($this->once())->method('beginTransaction');
-        $this->entityManager->expects($this->once())->method('rollback');
-        $this->entityManager->expects($this->never())->method('persist');
-        $this->entityManager->expects($this->never())->method('flush');
-        $this->entityManager->expects($this->never())->method('commit');
+        $this->assertEntityManagerRollback();
 
         $this->service->invalidateAlert($this->task);
     }
